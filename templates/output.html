@@ -1,0 +1,119 @@
+<!-- File: Output.html -->
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Prediction Results - Credit Card Fraud Detector</title>
+  <style>
+    body {
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
+      margin: 0;
+      background: #f9fafb;
+    }
+    .card {
+      max-width: 900px;
+      margin: 2.5rem auto;
+      background: white;
+      padding: 2rem;
+      border-radius: 12px;
+      box-shadow: 0 8px 25px rgba(0,0,0,0.08);
+    }
+    h1 {
+      margin-top: 0;
+      text-align: center;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 1.5rem;
+    }
+    th, td {
+      border: 1px solid #e5e7eb;
+      padding: 0.75rem;
+      text-align: center;
+    }
+    th {
+      background: #f3f4f6;
+      font-weight: 600;
+    }
+    tr:nth-child(even) td {
+      background: #f9fafb;
+    }
+    .fraud {
+      color: crimson;
+      font-weight: 700;
+    }
+    .safe {
+      color: seagreen;
+      font-weight: 700;
+    }
+    .actions {
+      margin-top: 1.5rem;
+      display: flex;
+      justify-content: center;
+      gap: 1rem;
+    }
+    button {
+      padding: 0.7rem 1.2rem;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 600;
+      background: #2563eb;
+      color: white;
+    }
+    button:hover {
+      background: #1e40af;
+    }
+  </style>
+</head>
+<body>
+  <main class="card">
+    <h1>Prediction Results</h1>
+    <table id="resultsTable">
+      <thead>
+        <tr>
+          <th>Transaction ID</th>
+          <th>Amount</th>
+          <th>MerchantID</th>
+          <th>Type</th>
+          <th>Location</th>
+          <th>Prediction</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+
+    <div class="actions">
+      <button onclick="window.location='input.html'">Back to Input</button>
+      <button onclick="window.location='welcome.html'">Home</button>
+    </div>
+  </main>
+
+  <script>
+    // Fetch stored results
+    const data = JSON.parse(sessionStorage.getItem("predictResults") || "[]");
+    const tbody = document.querySelector("#resultsTable tbody");
+
+    if (data.length === 0) {
+      tbody.innerHTML = `<tr><td colspan="6">No results found. Please go back and enter input.</td></tr>`;
+    } else {
+      data.forEach(row => {
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+          <td>${row.TransactionID || "-"}</td>
+          <td>${row.Amount || "-"}</td>
+          <td>${row.MerchantID || "-"}</td>
+          <td>${row.TransactionType || "-"}</td>
+          <td>${row.Location || "-"}</td>
+          <td class="${row.Prediction == 1 ? "fraud" : "safe"}">
+            ${row.Prediction == 1 ? "Fraud" : "Not Fraud"}
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+  </script>
+</body>
+</html>
