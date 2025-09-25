@@ -4,732 +4,107 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>Input - Credit Card Fraud Detector</title>
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400;1,500;1,600;1,700&display=swap" rel="stylesheet">
-  <style>
-    * {
-      box-sizing: border-box;
-    }
-
-    body {
-      font-family: 'Playfair Display', serif;
-      font-style: italic;
-      margin: 0;
-      min-height: 100vh;
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
-      animation: gradientFlow 12s ease infinite;
-      padding: 1rem;
-    }
-
-    @keyframes gradientFlow {
-      0%, 100% { background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%); }
-      33% { background: linear-gradient(135deg, #764ba2 0%, #f093fb 50%, #667eea 100%); }
-      66% { background: linear-gradient(135deg, #f093fb 0%, #667eea 50%, #764ba2 100%); }
-    }
-
-    .container {
-      max-width: 900px;
-      margin: 2rem auto;
-      perspective: 1200px;
-    }
-
-    .card {
-      background: rgba(255, 255, 255, 0.95);
-      backdrop-filter: blur(25px);
-      border: 1px solid rgba(255, 255, 255, 0.25);
-      padding: 3rem;
-      border-radius: 24px;
-      box-shadow: 
-        0 25px 50px rgba(0, 0, 0, 0.15),
-        0 15px 35px rgba(0, 0, 0, 0.1),
-        inset 0 1px 0 rgba(255, 255, 255, 0.6);
-      transform: translateY(20px) rotateX(2deg);
-      animation: cardEntrance 1.4s cubic-bezier(0.23, 1, 0.320, 1) forwards;
-      transition: transform 0.4s ease;
-    }
-
-    .card:hover {
-      transform: translateY(-5px) rotateX(0deg);
-    }
-
-    @keyframes cardEntrance {
-      0% {
-        opacity: 0;
-        transform: translateY(60px) rotateX(8deg) scale(0.95);
-      }
-      100% {
-        opacity: 1;
-        transform: translateY(0) rotateX(0deg) scale(1);
-      }
-    }
-
-    .header {
-      text-align: center;
-      margin-bottom: 3rem;
-      animation: fadeInDown 1.2s ease 0.3s both;
-    }
-
-    .icon-grid {
-      display: flex;
-      justify-content: center;
-      gap: 1rem;
-      margin-bottom: 2rem;
-    }
-
-    .header-icon {
-      width: 60px;
-      height: 60px;
-      background: linear-gradient(135deg, #667eea, #764ba2);
-      border-radius: 16px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      animation: iconFloat 3s ease-in-out infinite;
-      animation-delay: calc(var(--delay, 0) * 0.2s);
-      box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
-    }
-
-    .header-icon:nth-child(1) { --delay: 0; }
-    .header-icon:nth-child(2) { --delay: 1; }
-    .header-icon:nth-child(3) { --delay: 2; }
-
-    @keyframes iconFloat {
-      0%, 100% { transform: translateY(0px) rotate(0deg); }
-      33% { transform: translateY(-10px) rotate(5deg); }
-      66% { transform: translateY(5px) rotate(-3deg); }
-    }
-
-    .icon {
-      width: 28px;
-      height: 28px;
-      fill: white;
-    }
-
-    h1 {
-      margin: 0 0 1rem;
-      font-size: 2.5rem;
-      font-weight: 700;
-      font-style: italic;
-      background: linear-gradient(135deg, #667eea, #764ba2, #f093fb);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-      letter-spacing: -0.02em;
-      text-align: center;
-    }
-
-    .subtitle {
-      color: #64748b;
-      font-size: 1.2rem;
-      font-weight: 400;
-      font-style: italic;
-      margin: 0;
-      line-height: 1.6;
-      text-align: center;
-    }
-
-    @keyframes fadeInDown {
-      0% {
-        opacity: 0;
-        transform: translateY(-30px);
-      }
-      100% {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
-
-    .section {
-      margin-bottom: 3rem;
-      animation: slideInUp 1s ease forwards;
-      animation-delay: calc(var(--section-delay, 0) * 0.2s);
-      opacity: 0;
-      transform: translateY(30px);
-    }
-
-    .section:nth-of-type(1) { --section-delay: 2; }
-    .section:nth-of-type(2) { --section-delay: 4; }
-
-    @keyframes slideInUp {
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
-
-    h3 {
-      margin: 0 0 1rem;
-      font-size: 1.8rem;
-      font-weight: 600;
-      font-style: italic;
-      color: #374151;
-      display: flex;
-      align-items: center;
-      gap: 0.75rem;
-    }
-
-    h3::before {
-      content: '';
-      width: 4px;
-      height: 30px;
-      background: linear-gradient(135deg, #667eea, #764ba2);
-      border-radius: 2px;
-      animation: barGlow 2s ease-in-out infinite alternate;
-    }
-
-    @keyframes barGlow {
-      0% { box-shadow: 0 0 5px rgba(102, 126, 234, 0.3); }
-      100% { box-shadow: 0 0 15px rgba(102, 126, 234, 0.6); }
-    }
-
-    .muted {
-      color: #6b7280;
-      font-size: 1rem;
-      font-style: italic;
-      margin-bottom: 1.5rem;
-      line-height: 1.6;
-    }
-
-    .file-upload-wrapper {
-      position: relative;
-      margin-bottom: 2rem;
-    }
-
-    .file-upload {
-      position: relative;
-      display: inline-block;
-      width: 100%;
-      cursor: pointer;
-      overflow: hidden;
-    }
-
-    .file-input {
-      position: absolute;
-      opacity: 0;
-      width: 100%;
-      height: 100%;
-      cursor: pointer;
-    }
-
-    .file-label {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 1rem;
-      padding: 2rem;
-      border: 2px dashed #d1d5db;
-      border-radius: 16px;
-      background: rgba(249, 250, 251, 0.8);
-      backdrop-filter: blur(10px);
-      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-      font-style: italic;
-      font-weight: 500;
-      color: #6b7280;
-    }
-
-    .file-label:hover {
-      border-color: #667eea;
-      background: rgba(102, 126, 234, 0.05);
-      transform: translateY(-2px);
-      box-shadow: 0 8px 25px rgba(102, 126, 234, 0.15);
-    }
-
-    .file-label.active {
-      border-color: #10b981;
-      background: rgba(16, 185, 129, 0.1);
-      color: #10b981;
-    }
-
-    .upload-icon {
-      width: 32px;
-      height: 32px;
-      fill: currentColor;
-      animation: bounce 2s infinite;
-    }
-
-    @keyframes bounce {
-      0%, 20%, 53%, 80%, 100% { transform: translateY(0); }
-      40%, 43% { transform: translateY(-8px); }
-    }
-
-    label {
-      display: block;
-      margin-bottom: 0.75rem;
-      font-weight: 500;
-      font-style: italic;
-      color: #374151;
-      font-size: 1rem;
-      letter-spacing: 0.01em;
-    }
-
-    .form-group {
-      animation: slideInLeft 0.8s ease forwards;
-      animation-delay: calc(var(--input-delay, 0) * 0.1s);
-      opacity: 0;
-      margin-bottom: 1.5rem;
-    }
-
-    .form-group:nth-child(1) { --input-delay: 6; }
-    .form-group:nth-child(2) { --input-delay: 7; }
-    .form-group:nth-child(3) { --input-delay: 8; }
-
-    @keyframes slideInLeft {
-      0% {
-        opacity: 0;
-        transform: translateX(-20px);
-      }
-      100% {
-        opacity: 1;
-        transform: translateX(0);
-      }
-    }
-
-    .row {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-      gap: 1.5rem;
-      margin-bottom: 1.5rem;
-    }
-
-    .input-wrapper {
-      position: relative;
-    }
-
-    input[type="text"], input[type="number"], input[type="email"] {
-      width: 100%;
-      padding: 1.25rem 1.5rem;
-      border: 2px solid #e5e7eb;
-      border-radius: 16px;
-      font-size: 1rem;
-      font-weight: 400;
-      font-style: italic;
-      font-family: 'Playfair Display', serif;
-      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-      background: rgba(255, 255, 255, 0.8);
-      backdrop-filter: blur(10px);
-      color: #374151;
-    }
-
-    input:focus {
-      outline: none;
-      border-color: #667eea;
-      box-shadow: 
-        0 0 0 4px rgba(102, 126, 234, 0.1),
-        0 8px 25px rgba(0, 0, 0, 0.1);
-      transform: translateY(-3px);
-      background: rgba(255, 255, 255, 0.95);
-    }
-
-    input::placeholder {
-      color: #9ca3af;
-      font-style: italic;
-      font-weight: 400;
-    }
-
-    .input-icon {
-      position: absolute;
-      right: 1.25rem;
-      top: 50%;
-      transform: translateY(-50%);
-      width: 20px;
-      height: 20px;
-      fill: #9ca3af;
-      transition: all 0.3s ease;
-      pointer-events: none;
-    }
-
-    input:focus ~ .input-icon {
-      fill: #667eea;
-      transform: translateY(-50%) scale(1.1);
-    }
-
-    .actions {
-      display: flex;
-      gap: 1rem;
-      margin-top: 2rem;
-      animation: fadeInUp 1.2s ease 1.2s both;
-    }
-
-    button {
-      flex: 1;
-      padding: 1.25rem 2rem;
-      border-radius: 16px;
-      border: none;
-      font-size: 1.1rem;
-      font-weight: 600;
-      font-style: italic;
-      font-family: 'Playfair Display', serif;
-      cursor: pointer;
-      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-      position: relative;
-      overflow: hidden;
-      letter-spacing: 0.02em;
-    }
-
-    button::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: -100%;
-      width: 100%;
-      height: 100%;
-      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
-      transition: left 0.8s;
-    }
-
-    button:hover::before {
-      left: 100%;
-    }
-
-    .btn-primary {
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      color: white;
-      box-shadow: 0 8px 25px rgba(102, 126, 234, 0.35);
-    }
-
-    .btn-primary:hover {
-      transform: translateY(-4px) scale(1.02);
-      box-shadow: 0 15px 35px rgba(102, 126, 234, 0.45);
-    }
-
-    .btn-secondary {
-      background: rgba(255, 255, 255, 0.8);
-      color: #6b7280;
-      border: 2px solid #e5e7eb;
-      backdrop-filter: blur(10px);
-    }
-
-    .btn-secondary:hover {
-      background: rgba(255, 255, 255, 0.95);
-      color: #374151;
-      border-color: #d1d5db;
-      transform: translateY(-3px);
-      box-shadow: 0 12px 25px rgba(0, 0, 0, 0.15);
-    }
-
-    .btn-danger {
-      background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
-      color: white;
-      box-shadow: 0 8px 25px rgba(239, 68, 68, 0.3);
-    }
-
-    .btn-danger:hover {
-      transform: translateY(-3px);
-      box-shadow: 0 12px 30px rgba(239, 68, 68, 0.4);
-    }
-
-    hr {
-      margin: 3rem 0;
-      border: none;
-      height: 2px;
-      background: linear-gradient(90deg, transparent, rgba(102, 126, 234, 0.3), transparent);
-      animation: lineGlow 3s ease-in-out infinite alternate;
-    }
-
-    @keyframes lineGlow {
-      0% { opacity: 0.3; }
-      100% { opacity: 0.8; }
-    }
-
-    #status {
-      margin-top: 1.5rem;
-      padding: 1rem 1.5rem;
-      border-radius: 12px;
-      font-style: italic;
-      font-weight: 500;
-      text-align: center;
-      opacity: 0;
-      transform: translateY(10px);
-      transition: all 0.3s ease;
-    }
-
-    #status.show {
-      opacity: 1;
-      transform: translateY(0);
-    }
-
-    #status.success {
-      background: rgba(16, 185, 129, 0.1);
-      color: #10b981;
-      border: 1px solid rgba(16, 185, 129, 0.2);
-    }
-
-    #status.error {
-      background: rgba(239, 68, 68, 0.1);
-      color: #ef4444;
-      border: 1px solid rgba(239, 68, 68, 0.2);
-    }
-
-    .floating-particles {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      pointer-events: none;
-      z-index: -1;
-    }
-
-    .particle {
-      position: absolute;
-      background: rgba(255, 255, 255, 0.1);
-      border-radius: 50%;
-      animation: particleFloat 25s infinite linear;
-    }
-
-    .particle:nth-child(1) {
-      width: 6px;
-      height: 6px;
-      top: 10%;
-      left: 10%;
-      animation-delay: -5s;
-    }
-
-    .particle:nth-child(2) {
-      width: 8px;
-      height: 8px;
-      top: 70%;
-      left: 80%;
-      animation-delay: -12s;
-    }
-
-    .particle:nth-child(3) {
-      width: 4px;
-      height: 4px;
-      top: 50%;
-      left: 15%;
-      animation-delay: -8s;
-    }
-
-    .particle:nth-child(4) {
-      width: 10px;
-      height: 10px;
-      top: 30%;
-      left: 85%;
-      animation-delay: -15s;
-    }
-
-    @keyframes particleFloat {
-      0% {
-        transform: translateY(0px) rotate(0deg);
-        opacity: 0.7;
-      }
-      50% {
-        transform: translateY(-100px) rotate(180deg);
-        opacity: 0.3;
-      }
-      100% {
-        transform: translateY(0px) rotate(360deg);
-        opacity: 0.7;
-      }
-    }
-
-    @keyframes fadeInUp {
-      0% {
-        opacity: 0;
-        transform: translateY(30px);
-      }
-      100% {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
-
-    @media (max-width: 768px) {
-      .card {
-        padding: 2rem 1.5rem;
-        margin: 1rem;
-      }
-      
-      h1 {
-        font-size: 2rem;
-      }
-      
-      .row {
-        grid-template-columns: 1fr;
-        gap: 1rem;
-      }
-      
-      .actions {
-        flex-direction: column;
-      }
-      
-      .header-icon {
-        width: 50px;
-        height: 50px;
-      }
-      
-      .icon {
-        width: 24px;
-        height: 24px;
-      }
-    }
-  </style>
+  <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-  <div class="floating-particles">
-    <div class="particle"></div>
-    <div class="particle"></div>
-    <div class="particle"></div>
-    <div class="particle"></div>
-  </div>
-
   <div class="container">
-    <main class="card">
-      <div class="header">
-        <div class="icon-grid">
-          <div class="header-icon">
-            <svg class="icon" viewBox="0 0 24 24" fill="currentColor">
-              <path d="M13 2.05v3.03c3.39.49 6 3.39 6 6.92 0 .9-.18 1.75-.48 2.54l2.6 1.53c.56-1.24.88-2.62.88-4.07 0-5.18-3.95-9.45-9-9.95zM12 19c-3.87 0-7-3.13-7-7 0-3.53 2.61-6.43 6-6.92V2.05c-5.06.5-9 4.76-9 9.95 0 5.52 4.47 10 9.99 10 3.31 0 6.24-1.61 8.06-4.09l-2.6-1.53C16.17 17.98 14.21 19 12 19z"/>
-            </svg>
-          </div>
-          <div class="header-icon">
-            <svg class="icon" viewBox="0 0 24 24" fill="currentColor">
-              <path d="M9 11H7v9h2v-9zm4 0h-2v9h2v-9zm4 0h-2v9h2v-9zm2-7v2H5V4h3.5l1-1h5l1 1H19zm-3 9c0 3.31-2.69 6-6 6s-6-2.69-6-6V6h12v7z"/>
-            </svg>
-          </div>
-          <div class="header-icon">
-            <svg class="icon" viewBox="0 0 24 24" fill="currentColor">
-              <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
-            </svg>
-          </div>
-        </div>
-        <h1>Transaction Analysis</h1>
-        <p class="subtitle">Upload CSV data or input individual transactions for fraud detection analysis</p>
-      </div>
+    <header>
+      <h1>Credit Card Fraud Detection</h1>
+      <p>Enter a transaction manually or upload a file for analysis</p>
+    </header>
 
-      <!-- CSV Upload Section -->
-      <div class="section">
-        <h3>Bulk CSV Analysis</h3>
-        <p class="muted">Required columns: TransactionID, Amount, MerchantID, TransactionType, Location</p>
-        
-        <div class="file-upload-wrapper">
-          <div class="file-upload">
-            <input type="file" id="csvFile" class="file-input" accept=".csv">
-            <label for="csvFile" class="file-label" id="fileLabel">
-              <svg class="upload-icon" viewBox="0 0 24 24" fill="currentColor">
-                <path d="M14,2H6A2,2 0 0,0 4,4V20A2,2 0 0,0 6,22H18A2,2 0 0,0 20,20V8L14,2M18,20H6V4H13V9H18V20Z"/>
+    <!-- Single Transaction Section -->
+    <div class="section">
+      <h3>Individual Transaction</h3>
+      <form id="singleForm" action="/predict" method="POST">
+        <div class="row">
+          <div class="form-group">
+            <label for="txid">Transaction ID</label>
+            <div class="input-wrapper">
+              <input id="txid" name="TransactionID" type="text" placeholder="Enter transaction ID" required>
+              <svg class="input-icon" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M9 4V6H15V4H17V6H20A2 2 0 0 1 22 8V19A2 2 0 0 1 20 21H4A2 2 0 0 1 2 19V8A2 2 0 0 1 4 6H7V4H9M4 10V19H20V10H4M6 12H11V17H6V12Z"/>
               </svg>
-              <span>Choose CSV file or drag & drop here</span>
-            </label>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="amount">Transaction Amount</label>
+            <div class="input-wrapper">
+              <input id="amount" name="Amount" type="number" step="0.01" placeholder="0.00" required>
+              <svg class="input-icon" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M7 15H9C9 16.08 10.37 17 12 17C13.63 17 15 16.08 15 15C15 13.9 13.96 13.5 11.76 12.97C9.64 12.44 7 11.78 7 9C7 7.21 8.47 5.69 10.5 5.18V3H13.5V5.18C15.53 5.69 17 7.21 17 9H15C15 7.92 13.63 7 12 7C10.37 7 9 7.92 9 9C9 10.1 10.04 10.5 12.24 11.03C14.36 11.56 17 12.22 17 15C17 16.79 15.53 18.31 13.5 18.82V21H10.5V18.82C8.47 18.31 7 16.79 7 15Z"/>
+              </svg>
+            </div>
           </div>
         </div>
-        
-        <div class="actions">
-          <button id="uploadBtn" class="btn-primary">Upload & Analyze</button>
-          <button type="button" class="btn-danger" onclick="clearFile()">Clear Selection</button>
+
+        <div class="row">
+          <div class="form-group">
+            <label for="merchant">Merchant ID</label>
+            <div class="input-wrapper">
+              <input id="merchant" name="MerchantID" type="text" placeholder="Merchant identifier" required>
+              <svg class="input-icon" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M12 3L2 12H5V20H19V12H22L12 3M12 8.75A2.25 2.25 0 0 1 14.25 11A2.25 2.25 0 0 1 12 13.25A2.25 2.25 0 0 1 9.75 11A2.25 2.25 0 0 1 12 8.75Z"/>
+              </svg>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="type">Transaction Type</label>
+            <div class="input-wrapper">
+              <input id="type" name="TransactionType" type="text" placeholder="e.g., purchase, withdrawal" required>
+              <svg class="input-icon" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M20 8H4V6H20M20 18H4V12H20M20 4H4C2.89 4 2 4.89 2 6V18A2 2 0 0 0 4 20H20A2 2 0 0 0 22 18V6C22 4.89 21.1 4 20 4Z"/>
+              </svg>
+            </div>
+          </div>
         </div>
-      </div>
-
-      <hr>
-
-      <!-- Single Transaction Section -->
-      <div class="section">
-        <h3>Individual Transaction</h3>
-        <form id="singleForm">
-          <div class="row">
-            <div class="form-group">
-              <label for="txid">Transaction ID</label>
-              <div class="input-wrapper">
-                <input id="txid" name="txid" type="text" placeholder="Enter transaction ID" required>
-                <svg class="input-icon" viewBox="0 0 24 24" fill="currentColor">
-                  <path d="M9,4V6H15V4H17V6H20A2,2 0 0,1 22,8V19A2,2 0 0,1 20,21H4A2,2 0 0,1 2,19V8A2,2 0 0,1 4,6H7V4H9M4,10V19H20V10H4M6,12H11V17H6V12Z"/>
-                </svg>
-              </div>
-            </div>
-            <div class="form-group">
-              <label for="amount">Transaction Amount</label>
-              <div class="input-wrapper">
-                <input id="amount" name="amount" type="number" step="0.01" placeholder="0.00" required>
-                <svg class="input-icon" viewBox="0 0 24 24" fill="currentColor">
-                  <path d="M7,15H9C9,16.08 10.37,17 12,17C13.63,17 15,16.08 15,15C15,13.9 13.96,13.5 11.76,12.97C9.64,12.44 7,11.78 7,9C7,7.21 8.47,5.69 10.5,5.18V3H13.5V5.18C15.53,5.69 17,7.21 17,9H15C15,7.92 13.63,7 12,7C10.37,7 9,7.92 9,9C9,10.1 10.04,10.5 12.24,11.03C14.36,11.56 17,12.22 17,15C17,16.79 15.53,18.31 13.5,18.82V21H10.5V18.82C8.47,18.31 7,16.79 7,15Z"/>
-                </svg>
-              </div>
-            </div>
-          </div>
-
-          <div class="row">
-            <div class="form-group">
-              <label for="merchant">Merchant ID</label>
-              <div class="input-wrapper">
-                <input id="merchant" name="merchant" type="text" placeholder="Merchant identifier" required>
-                <svg class="input-icon" viewBox="0 0 24 24" fill="currentColor">
-                  <path d="M12,3L2,12H5V20H19V12H22L12,3M12,8.75A2.25,2.25 0 0,1 14.25,11A2.25,2.25 0 0,1 12,13.25A2.25,2.25 0 0,1 9.75,11A2.25,2.25 0 0,1 12,8.75Z"/>
-                </svg>
-              </div>
-            </div>
-            <div class="form-group">
-              <label for="type">Transaction Type</label>
-              <div class="input-wrapper">
-                <input id="type" name="type" type="text" placeholder="e.g., purchase, withdrawal" required>
-                <svg class="input-icon" viewBox="0 0 24 24" fill="currentColor">
-                  <path d="M20,8H4V6H20M20,18H4V12H20M20,4H4C2.89,4 2,4.89 2,6V18A2,2 0 0,0 4,20H20A2,2 0 0,0 22,18V6C22,4.89 21.1,4 20,4Z"/>
-                </svg>
-              </div>
-            </div>
-          </div>
-
-          <div class="row">
-            <div class="form-group">
-              <label for="location">Location</label>
-              <div class="input-wrapper">
-                <input id="location" name="location" type="text" placeholder="e.g., Mumbai, Delhi" required>
-                <svg class="input-icon" viewBox="0 0 24 24" fill="currentColor">
-                  <path d="M12,2C15.31,2 18,4.66 18,7.95C18,12.41 12,19 12,19C12,19 6,12.41 6,7.95C6,4.66 8.69,2 12,2M12,6A2,2 0 0,0 10,8A2,2 0 0,0 12,10A2,2 0 0,0 14,8A2,2 0 0,0 12,6M20,19C20,21.21 16.42,23 12,23C7.58,23 4,21.21 4,19C4,17.71 5.22,16.56 7.11,15.94L7.75,16.74C6.67,17.19 6,17.81 6,18.5C6,19.88 8.69,21 12,21C15.31,21 18,19.88 18,18.5C18,17.81 17.33,17.19 16.25,16.74L16.89,15.94C18.78,16.56 20,17.71 20,19Z"/>
-                </svg>
-              </div>
-            </div>
-          </div>
-
-          <div class="actions">
-            <button type="submit" class="btn-primary">Analyze Transaction</button>
-            <button type="button" class="btn-secondary" onclick="window.location='Welcome.html'">Back to Welcome</button>
-          </div>
-        </form>
-      </div>
-
-      <div id="status"></div>
-    </main>
+<div class="row">
+  <div class="form-group">
+    <label for="location">Location</label>
+    <div class="input-wrapper">
+      <select id="location" name="Location" required>
+        <option value="" disabled selected>Select location</option>
+        <option value="0">Chicago</option>
+        <option value="1">Dallas</option>
+        <option value="2">Houston</option>
+        <option value="3">Los Angeles</option>
+        <option value="4">New York</option>
+        <option value="5">Philadelphia</option>
+        <option value="6">Phoenix</option>
+        <option value="7">San Antonio</option>
+        <option value="8">San Diego</option>
+        <option value="9">San Jose</option>
+      </select>
+    </div>
   </div>
+</div>
 
-  <script>
-    const statusEl = document.getElementById('status');
-    const fileLabel = document.getElementById('fileLabel');
-    const fileInput = document.getElementById('csvFile');
 
-    function setStatus(msg, type = 'info') {
-      statusEl.textContent = msg;
-      statusEl.className = `show ${type}`;
-      setTimeout(() => statusEl.classList.remove('show'), 5000);
-    }
+        <div class="actions">
+          <button type="submit" class="btn-primary">Analyze Transaction</button>
+          <button type="button" class="btn-secondary" onclick="window.location='welcome.html'">Back to Welcome</button>
+        </div>
+      </form>
+    </div>
 
-    function clearFile() {
-      fileInput.value = '';
-      fileLabel.classList.remove('active');
-      fileLabel.innerHTML = `
-        <svg class="upload-icon" viewBox="0 0 24 24" fill="currentColor">
-          <path d="M14,2H6A2,2 0 0,0 4,4V20A2,2 0 0,0 6,22H18A2,2 0 0,0 20,20V8L14,2M18,20H6V4H13V9H18V20Z"/>
-        </svg>
-        <span>Choose CSV file or drag & drop here</span>
-      `;
-    }
-
-    // File input handling
-    fileInput.addEventListener('change', (e) => {
-      const file = e.target.files[0];
-      if (file) {
-        fileLabel.classList.add('active');
-        fileLabel.innerHTML = `
-          <svg class="upload-icon" viewBox="0 0 24 24" fill="currentColor">
-            <path d="M21,7L9,19L3.5,13.5L4.91,12.09L9,16.17L19.59,5.59L21,7Z"/>
-          </svg>
-          <span>Selected: ${file.name}</span>
-        `;
-      }
-    });
-
-    // Drag and drop functionality
-    ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
-      fileLabel.addEventListener(eventName, preventDefaults, false);
-    });
-
-    function preventDefaults(
+    <!-- Bulk Transaction Upload -->
+    <div class="section">
+      <h3>Bulk Transaction Upload</h3>
+      <form id="bulkForm" action="/predict_bulk" method="POST" enctype="multipart/form-data">
+        <div class="form-group">
+          <label for="file">Upload CSV File</label>
+          <div class="input-wrapper">
+            <input id="file" name="file" type="file" accept=".csv" required>
+            <svg class="input-icon" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M14 3V8H19L12 16L5 8H10V3H14M5 20V18H19V20H5Z"/>
+            </svg>
+          </div>
+        </div>
+        <div class="actions">
+          <button type="submit" class="btn-primary">Upload & Analyze</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</body>
+</html>

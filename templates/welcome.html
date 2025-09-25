@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>Welcome - Credit Card Fraud Detector</title>
+  <title>Credit Card Fraud Detection System</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <style>
     * {
@@ -15,10 +15,6 @@
       margin: 0;
       min-height: 100vh;
       background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 1rem;
       animation: gradientShift 8s ease infinite;
     }
 
@@ -28,12 +24,17 @@
     }
 
     .container {
-      width: 100%;
-      max-width: 480px;
-      perspective: 1000px;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 2rem 1rem;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
     }
 
-    .card {
+    .page {
+      display: none;
       background: rgba(255, 255, 255, 0.95);
       backdrop-filter: blur(20px);
       border: 1px solid rgba(255, 255, 255, 0.2);
@@ -43,30 +44,27 @@
         0 20px 40px rgba(0, 0, 0, 0.1),
         0 15px 12px rgba(0, 0, 0, 0.08),
         inset 0 1px 0 rgba(255, 255, 255, 0.6);
-      transform: translateY(20px) rotateX(5deg);
-      animation: cardEntrance 1.2s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
-      transition: transform 0.3s ease;
+      animation: pageEnter 0.8s ease forwards;
     }
 
-    .card:hover {
-      transform: translateY(0) rotateX(0deg) scale(1.02);
+    .page.active {
+      display: block;
     }
 
-    @keyframes cardEntrance {
+    @keyframes pageEnter {
       0% {
         opacity: 0;
-        transform: translateY(50px) rotateX(15deg) scale(0.9);
+        transform: translateY(30px) scale(0.95);
       }
       100% {
         opacity: 1;
-        transform: translateY(0) rotateX(0deg) scale(1);
+        transform: translateY(0) scale(1);
       }
     }
 
     .header {
       text-align: center;
-      margin-bottom: 2.5rem;
-      animation: fadeInUp 1s ease 0.3s both;
+      margin-bottom: 3rem;
     }
 
     .icon {
@@ -87,7 +85,7 @@
       50% { transform: scale(1.05); }
     }
 
-    .shield {
+    .shield, .chart-icon {
       width: 40px;
       height: 40px;
       fill: white;
@@ -95,7 +93,7 @@
 
     h1 {
       margin: 0 0 0.5rem;
-      font-size: 2.2rem;
+      font-size: 2.5rem;
       font-weight: 700;
       background: linear-gradient(135deg, #667eea, #764ba2);
       -webkit-background-clip: text;
@@ -108,40 +106,34 @@
       color: #64748b;
       font-size: 1.1rem;
       font-weight: 400;
-      margin: 0;
+      margin: 0 0 2rem;
       line-height: 1.5;
     }
 
-    @keyframes fadeInUp {
-      0% {
-        opacity: 0;
-        transform: translateY(20px);
-      }
-      100% {
-        opacity: 1;
-        transform: translateY(0);
-      }
+    .section {
+      background: rgba(255, 255, 255, 0.6);
+      border-radius: 16px;
+      padding: 2rem;
+      margin-bottom: 2rem;
+      border: 1px solid rgba(255, 255, 255, 0.3);
+    }
+
+    .section h3 {
+      color: #374151;
+      font-size: 1.3rem;
+      font-weight: 600;
+      margin: 0 0 1.5rem;
+    }
+
+    .row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
+      margin-bottom: 1.5rem;
     }
 
     .form-group {
       margin-bottom: 1.5rem;
-      animation: slideInLeft 0.8s ease forwards;
-      animation-delay: calc(var(--delay, 0) * 0.1s);
-      opacity: 0;
-    }
-
-    .form-group:nth-child(1) { --delay: 6; }
-    .form-group:nth-child(2) { --delay: 7; }
-
-    @keyframes slideInLeft {
-      0% {
-        opacity: 0;
-        transform: translateX(-30px);
-      }
-      100% {
-        opacity: 1;
-        transform: translateX(0);
-      }
     }
 
     label {
@@ -150,38 +142,27 @@
       font-weight: 500;
       color: #374151;
       font-size: 0.95rem;
-      letter-spacing: 0.01em;
     }
 
     .input-wrapper {
       position: relative;
     }
 
-    input {
+    input, select {
       width: 100%;
-      padding: 1rem 1.25rem;
+      padding: 1rem 3rem 1rem 1.25rem;
       border: 2px solid #e5e7eb;
-      border-radius: 16px;
+      border-radius: 12px;
       font-size: 1rem;
-      font-weight: 400;
-      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-      background: rgba(255, 255, 255, 0.8);
-      backdrop-filter: blur(10px);
+      transition: all 0.3s ease;
+      background: rgba(255, 255, 255, 0.9);
     }
 
-    input:focus {
+    input:focus, select:focus {
       outline: none;
       border-color: #667eea;
-      box-shadow: 
-        0 0 0 4px rgba(102, 126, 234, 0.1),
-        0 8px 16px rgba(0, 0, 0, 0.1);
-      transform: translateY(-2px);
-      background: rgba(255, 255, 255, 0.95);
-    }
-
-    input::placeholder {
-      color: #9ca3af;
-      font-weight: 400;
+      box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
+      transform: translateY(-1px);
     }
 
     .input-icon {
@@ -192,47 +173,31 @@
       width: 20px;
       height: 20px;
       fill: #9ca3af;
-      transition: fill 0.3s ease;
-    }
-
-    input:focus + .input-icon {
-      fill: #667eea;
+      pointer-events: none;
     }
 
     .actions {
       display: flex;
       gap: 1rem;
-      margin-top: 2.5rem;
-      animation: fadeInUp 1s ease 0.9s both;
+      justify-content: center;
+      margin-top: 2rem;
     }
 
     button {
-      flex: 1;
-      padding: 1rem 1.5rem;
-      border-radius: 16px;
+      padding: 1rem 2rem;
       border: none;
+      border-radius: 12px;
       font-size: 1rem;
       font-weight: 600;
       cursor: pointer;
-      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      transition: all 0.3s ease;
       position: relative;
       overflow: hidden;
-      letter-spacing: 0.01em;
     }
 
-    button::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: -100%;
-      width: 100%;
-      height: 100%;
-      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
-      transition: left 0.6s;
-    }
-
-    button:hover::before {
-      left: 100%;
+    button:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
     }
 
     .btn-primary {
@@ -241,117 +206,163 @@
       box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
     }
 
-    .btn-primary:hover {
-      transform: translateY(-3px);
+    .btn-primary:hover:not(:disabled) {
+      transform: translateY(-2px);
       box-shadow: 0 12px 28px rgba(102, 126, 234, 0.4);
     }
 
     .btn-secondary {
-      background: rgba(255, 255, 255, 0.8);
+      background: rgba(255, 255, 255, 0.9);
       color: #6b7280;
       border: 2px solid #e5e7eb;
-      backdrop-filter: blur(10px);
     }
 
     .btn-secondary:hover {
-      background: rgba(255, 255, 255, 0.95);
+      background: white;
       color: #374151;
-      border-color: #d1d5db;
-      transform: translateY(-2px);
-      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+      transform: translateY(-1px);
     }
 
-    .floating-shapes {
-      position: fixed;
-      top: 0;
-      left: 0;
+    .results-container {
+      margin: 2rem 0;
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+
+    .stat-card {
+      background: rgba(255, 255, 255, 0.8);
+      padding: 1.5rem;
+      border-radius: 12px;
+      text-align: center;
+      border: 1px solid rgba(255, 255, 255, 0.3);
+    }
+
+    .stat-number {
+      font-size: 2rem;
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .stat-label {
+      color: #6b7280;
+      font-size: 0.9rem;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .table-container {
+      background: rgba(255, 255, 255, 0.9);
+      border-radius: 16px;
+      padding: 1.5rem;
+      overflow-x: auto;
+    }
+
+    table {
       width: 100%;
-      height: 100%;
-      pointer-events: none;
-      z-index: -1;
+      border-collapse: separate;
+      border-spacing: 0;
     }
 
-    .shape {
-      position: absolute;
-      background: rgba(255, 255, 255, 0.1);
-      border-radius: 50%;
-      animation: float 20s infinite linear;
+    th, td {
+      padding: 1rem;
+      text-align: left;
+      border-bottom: 1px solid #e5e7eb;
     }
 
-    .shape:nth-child(1) {
-      width: 100px;
-      height: 100px;
-      top: 20%;
-      left: 10%;
-      animation-delay: -2s;
+    th {
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      color: white;
+      font-weight: 600;
+      text-transform: uppercase;
+      font-size: 0.9rem;
+      letter-spacing: 0.05em;
     }
 
-    .shape:nth-child(2) {
-      width: 60px;
-      height: 60px;
-      top: 60%;
-      left: 80%;
-      animation-delay: -8s;
+    th:first-child {
+      border-top-left-radius: 8px;
     }
 
-    .shape:nth-child(3) {
-      width: 80px;
-      height: 80px;
-      top: 40%;
-      left: 20%;
-      animation-delay: -15s;
+    th:last-child {
+      border-top-right-radius: 8px;
     }
 
-    @keyframes float {
-      0% {
-        transform: translateY(0px) rotate(0deg);
-        opacity: 0.7;
-      }
-      50% {
-        transform: translateY(-50px) rotate(180deg);
-        opacity: 0.3;
-      }
-      100% {
-        transform: translateY(0px) rotate(360deg);
-        opacity: 0.7;
-      }
+    tbody tr:hover {
+      background: rgba(102, 126, 234, 0.05);
     }
 
-    @media (max-width: 640px) {
-      .card {
-        padding: 2rem 1.5rem;
-        margin: 1rem;
+    .fraud {
+      color: #ef4444;
+      font-weight: 700;
+    }
+
+    .safe {
+      color: #10b981;
+      font-weight: 700;
+    }
+
+    .loading {
+      display: none;
+      text-align: center;
+      color: #6b7280;
+      font-style: italic;
+      margin: 2rem 0;
+    }
+
+    .error {
+      background: #fef2f2;
+      color: #dc2626;
+      padding: 1rem;
+      border-radius: 8px;
+      margin: 1rem 0;
+      border-left: 4px solid #dc2626;
+    }
+
+    .success {
+      background: #f0fdf4;
+      color: #16a34a;
+      padding: 1rem;
+      border-radius: 8px;
+      margin: 1rem 0;
+      border-left: 4px solid #16a34a;
+    }
+
+    @media (max-width: 768px) {
+      .container {
+        padding: 1rem;
       }
       
-      h1 {
-        font-size: 1.8rem;
+      .page {
+        padding: 2rem 1.5rem;
+      }
+      
+      .row {
+        grid-template-columns: 1fr;
+        gap: 1rem;
       }
       
       .actions {
         flex-direction: column;
       }
       
-      .icon {
-        width: 60px;
-        height: 60px;
-      }
-      
-      .shield {
-        width: 30px;
-        height: 30px;
+      h1 {
+        font-size: 2rem;
       }
     }
   </style>
 </head>
 <body>
-  <div class="floating-shapes">
-    <div class="shape"></div>
-    <div class="shape"></div>
-    <div class="shape"></div>
-  </div>
-
   <div class="container">
-    <div class="card">
+    <!-- Welcome Page -->
+    <div id="welcomePage" class="page active">
       <div class="header">
         <div class="icon">
           <svg class="shield" viewBox="0 0 24 24" fill="currentColor">
@@ -367,7 +378,7 @@
         <div class="form-group">
           <label for="name">Full Name</label>
           <div class="input-wrapper">
-            <input id="name" name="name" placeholder="Enter your full name" required autocomplete="name">
+            <input id="name" name="name" placeholder="Enter your full name" required>
             <svg class="input-icon" viewBox="0 0 24 24" fill="currentColor">
               <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
             </svg>
@@ -377,7 +388,7 @@
         <div class="form-group">
           <label for="email">Email Address</label>
           <div class="input-wrapper">
-            <input id="email" name="email" type="email" placeholder="Enter your email address" required autocomplete="email">
+            <input id="email" name="email" type="email" placeholder="Enter your email address" required>
             <svg class="input-icon" viewBox="0 0 24 24" fill="currentColor">
               <path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/>
             </svg>
@@ -386,68 +397,353 @@
 
         <div class="actions">
           <button type="submit" class="btn-primary">Continue</button>
-          <button type="button" class="btn-secondary" onclick="window.location='input.html'">Skip for Now</button>
+          <button type="button" class="btn-secondary" onclick="showPage('inputPage')">Skip for Now</button>
         </div>
       </form>
+    </div>
+
+    <!-- Input Page -->
+    <div id="inputPage" class="page">
+      <div class="header">
+        <div class="icon">
+          <svg class="shield" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4z"/>
+          </svg>
+        </div>
+        <h1>Credit Card Fraud Detection</h1>
+        <p class="subtitle">Enter a transaction manually or upload a file for analysis</p>
+      </div>
+
+      <!-- Single Transaction Section -->
+      <div class="section">
+        <h3>Individual Transaction</h3>
+        <form id="singleForm">
+          <div class="row">
+            <div class="form-group">
+              <label for="txid">Transaction ID</label>
+              <div class="input-wrapper">
+                <input id="txid" name="TransactionID" type="text" placeholder="Enter transaction ID" required>
+                <svg class="input-icon" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M9 4V6H15V4H17V6H20A2 2 0 0 1 22 8V19A2 2 0 0 1 20 21H4A2 2 0 0 1 2 19V8A2 2 0 0 1 4 6H7V4H9M4 10V19H20V10H4M6 12H11V17H6V12Z"/>
+                </svg>
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="amount">Transaction Amount</label>
+              <div class="input-wrapper">
+                <input id="amount" name="Amount" type="number" step="0.01" placeholder="0.00" required>
+                <svg class="input-icon" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M7 15H9C9 16.08 10.37 17 12 17C13.63 17 15 16.08 15 15C15 13.9 13.96 13.5 11.76 12.97C9.64 12.44 7 11.78 7 9C7 7.21 8.47 5.69 10.5 5.18V3H13.5V5.18C15.53 5.69 17 7.21 17 9H15C15 7.92 13.63 7 12 7C10.37 7 9 7.92 9 9C9 10.1 10.04 10.5 12.24 11.03C14.36 11.56 17 12.22 17 15C17 16.79 15.53 18.31 13.5 18.82V21H10.5V18.82C8.47 18.31 7 16.79 7 15Z"/>
+                </svg>
+              </div>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="form-group">
+              <label for="merchant">Merchant ID</label>
+              <div class="input-wrapper">
+                <input id="merchant" name="MerchantID" type="text" placeholder="Merchant identifier" required>
+                <svg class="input-icon" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M12 3L2 12H5V20H19V12H22L12 3M12 8.75A2.25 2.25 0 0 1 14.25 11A2.25 2.25 0 0 1 12 13.25A2.25 2.25 0 0 1 9.75 11A2.25 2.25 0 0 1 12 8.75Z"/>
+                </svg>
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="type">Transaction Type</label>
+              <div class="input-wrapper">
+                <select id="type" name="TransactionType" required>
+                  <option value="">Select type</option>
+                  <option value="purchase">Purchase</option>
+                  <option value="withdrawal">Withdrawal</option>
+                  <option value="transfer">Transfer</option>
+                  <option value="deposit">Deposit</option>
+                </select>
+                <svg class="input-icon" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M7 10l5 5 5-5z"/>
+                </svg>
+              </div>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="form-group">
+              <label for="location">Location</label>
+              <div class="input-wrapper">
+                <select id="location" name="Location" required>
+                  <option value="">Select location</option>
+                  <option value="Mumbai">Mumbai</option>
+                  <option value="Delhi">Delhi</option>
+                  <option value="Bangalore">Bangalore</option>
+                  <option value="Chennai">Chennai</option>
+                  <option value="Kolkata">Kolkata</option>
+                  <option value="Hyderabad">Hyderabad</option>
+                  <option value="Pune">Pune</option>
+                </select>
+                <svg class="input-icon" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M12 2C15.31 2 18 4.66 18 7.95C18 12.41 12 19 12 19C12 19 6 12.41 6 7.95C6 4.66 8.69 2 12 2M12 6A2 2 0 0 0 10 8A2 2 0 0 0 12 10A2 2 0 0 0 14 8A2 2 0 0 0 12 6Z"/>
+                </svg>
+              </div>
+            </div>
+          </div>
+
+          <div class="actions">
+            <button type="submit" class="btn-primary">Analyze Transaction</button>
+            <button type="button" class="btn-secondary" onclick="showPage('welcomePage')">Back to Welcome</button>
+          </div>
+        </form>
+      </div>
+
+      <!-- Bulk Transaction Upload -->
+      <div class="section">
+        <h3>Bulk Transaction Upload</h3>
+        <form id="bulkForm">
+          <div class="form-group">
+            <label for="file">Upload CSV File</label>
+            <div class="input-wrapper">
+              <input id="file" name="file" type="file" accept=".csv" required>
+              <svg class="input-icon" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M14 3V8H19L12 16L5 8H10V3H14M5 20V18H19V20H5Z"/>
+              </svg>
+            </div>
+          </div>
+          <div class="actions">
+            <button type="submit" class="btn-primary">Upload & Analyze</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Results Page -->
+    <div id="resultsPage" class="page">
+      <div class="header">
+        <div class="icon">
+          <svg class="chart-icon" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M3,3V21H21V19H5V3H3M9,17H7V10H9V17M13,17H11V7H13V17M17,17H15V13H17V17M21,17H19V4H21V17Z"/>
+          </svg>
+        </div>
+        <h1>Analysis Complete</h1>
+        <p class="subtitle">Detailed fraud detection results for your transactions</p>
+      </div>
+
+      <div class="loading" id="loadingIndicator">
+        <div>Analyzing transactions...</div>
+      </div>
+
+      <div class="results-container" id="resultsContainer" style="display: none;">
+        <div class="stats-grid" id="statsGrid"></div>
+        <div class="table-container">
+          <table id="resultsTable">
+            <thead>
+              <tr>
+                <th>Transaction ID</th>
+                <th>Amount</th>
+                <th>Merchant ID</th>
+                <th>Type</th>
+                <th>Location</th>
+                <th>Risk Assessment</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="actions">
+        <button class="btn-primary" onclick="showPage('inputPage')">Analyze More</button>
+        <button class="btn-secondary" onclick="showPage('welcomePage')">Return Home</button>
+      </div>
     </div>
   </div>
 
   <script>
-    const form = document.getElementById('welcomeForm');
-    
-    // Add input animation effects
-    const inputs = document.querySelectorAll('input');
-    inputs.forEach(input => {
-      input.addEventListener('focus', function() {
-        this.parentElement.classList.add('focused');
-      });
+    let currentResults = [];
+
+    function showPage(pageId) {
+      document.querySelectorAll('.page').forEach(page => page.classList.remove('active'));
+      document.getElementById(pageId).classList.add('active');
+    }
+
+    function showMessage(message, type = 'info') {
+      const messageDiv = document.createElement('div');
+      messageDiv.className = type === 'error' ? 'error' : 'success';
+      messageDiv.textContent = message;
       
-      input.addEventListener('blur', function() {
-        this.parentElement.classList.remove('focused');
-      });
-    });
-    
-    form.addEventListener('submit', e => {
-      e.preventDefault();
+      const currentPage = document.querySelector('.page.active');
+      const header = currentPage.querySelector('.header');
+      header.appendChild(messageDiv);
       
-      // Add loading state to button
-      const submitBtn = form.querySelector('.btn-primary');
-      const originalText = submitBtn.textContent;
-      submitBtn.textContent = 'Processing...';
-      submitBtn.style.background = 'linear-gradient(135deg, #9ca3af 0%, #6b7280 100%)';
+      setTimeout(() => messageDiv.remove(), 5000);
+    }
+
+    function formatCurrency(amount) {
+      return new Intl.NumberFormat('en-IN', {
+        style: 'currency',
+        currency: 'INR'
+      }).format(amount);
+    }
+
+    function calculateStats(data) {
+      const totalTransactions = data.length;
+      const fraudTransactions = data.filter(item => item.prediction == 1).length;
+      const safeTransactions = totalTransactions - fraudTransactions;
       
-      // Simulate processing time
-      setTimeout(() => {
-        // Save user info to sessionStorage (optional)
-        const data = {
-          name: form.name.value.trim(),
-          email: form.email.value.trim()
-        };
-        sessionStorage.setItem('userInfo', JSON.stringify(data));
+      return { totalTransactions, fraudTransactions, safeTransactions };
+    }
+
+    function displayStats(stats) {
+      const statsGrid = document.getElementById('statsGrid');
+      statsGrid.innerHTML = `
+        <div class="stat-card">
+          <div class="stat-number">${stats.totalTransactions}</div>
+          <div class="stat-label">Total Transactions</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-number" style="color: #ef4444;">${stats.fraudTransactions}</div>
+          <div class="stat-label">Fraud Detected</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-number" style="color: #10b981;">${stats.safeTransactions}</div>
+          <div class="stat-label">Safe Transactions</div>
+        </div>
+      `;
+    }
+
+    function displayResults(data) {
+      const tbody = document.querySelector("#resultsTable tbody");
+      tbody.innerHTML = '';
+      
+      if (data.length === 0) {
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="6" style="text-align: center; color: #6b7280; font-style: italic; padding: 2rem;">
+              No results found. Please go back and enter transaction data.
+            </td>
+          </tr>
+        `;
+        return;
+      }
+
+      const stats = calculateStats(data);
+      displayStats(stats);
+
+      data.forEach(row => {
+        const tr = document.createElement("tr");
+        const predictionClass = row.prediction == 1 ? "fraud" : "safe";
+        const predictionText = row.prediction == 1 ? "🚨 High Risk" : "✅ Low Risk";
         
-        // Success state
-        submitBtn.textContent = 'Success!';
-        submitBtn.style.background = 'linear-gradient(135deg, #10b981 0%, #059669 100%)';
-        
+        tr.innerHTML = `
+          <td style="font-weight: 600;">${row.TransactionID || "-"}</td>
+          <td style="font-weight: 600;">${row.Amount ? formatCurrency(row.Amount) : "-"}</td>
+          <td>${row.MerchantID || "-"}</td>
+          <td style="text-transform: capitalize;">${row.TransactionType || "-"}</td>
+          <td>${row.Location || "-"}</td>
+          <td class="${predictionClass}">${predictionText}</td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    // Mock prediction function (replace with actual API call)
+    function mockPrediction(data) {
+      return new Promise((resolve) => {
         setTimeout(() => {
-          // Redirect to input.html
-          window.location.href = 'input.html';
-        }, 800);
-      }, 1200);
+          // Simple mock logic: transactions over 2000 or from certain merchants are flagged
+          const result = data.map(item => ({
+            ...item,
+            prediction: (parseFloat(item.Amount) > 2000 || item.MerchantID.includes('SUSPECT')) ? 1 : 0
+          }));
+          resolve(result);
+        }, 2000);
+      });
+    }
+
+    // Welcome form submission
+    document.getElementById('welcomeForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      const name = this.name.value.trim();
+      const email = this.email.value.trim();
+      
+      if (name && email) {
+        showMessage(`Welcome, ${name}! Redirecting to analysis page...`, 'success');
+        setTimeout(() => showPage('inputPage'), 1500);
+      }
     });
 
-    // Add subtle parallax effect to floating shapes
-    document.addEventListener('mousemove', (e) => {
-      const shapes = document.querySelectorAll('.shape');
-      const mouseX = e.clientX / window.innerWidth;
-      const mouseY = e.clientY / window.innerHeight;
+    // Single transaction form
+    document.getElementById('singleForm').addEventListener('submit', async function(e) {
+      e.preventDefault();
       
-      shapes.forEach((shape, index) => {
-        const speed = (index + 1) * 0.02;
-        const x = mouseX * speed * 50;
-        const y = mouseY * speed * 50;
-        shape.style.transform = `translate(${x}px, ${y}px)`;
-      });
+      const formData = new FormData(this);
+      const data = [{
+        TransactionID: formData.get('TransactionID'),
+        Amount: formData.get('Amount'),
+        MerchantID: formData.get('MerchantID'),
+        TransactionType: formData.get('TransactionType'),
+        Location: formData.get('Location')
+      }];
+
+      showPage('resultsPage');
+      document.getElementById('loadingIndicator').style.display = 'block';
+      document.getElementById('resultsContainer').style.display = 'none';
+
+      try {
+        const results = await mockPrediction(data);
+        currentResults = results;
+        displayResults(results);
+        
+        document.getElementById('loadingIndicator').style.display = 'none';
+        document.getElementById('resultsContainer').style.display = 'block';
+      } catch (error) {
+        showMessage('Error analyzing transaction. Please try again.', 'error');
+        showPage('inputPage');
+      }
+    });
+
+    // Bulk upload form
+    document.getElementById('bulkForm').addEventListener('submit', async function(e) {
+      e.preventDefault();
+      
+      const fileInput = document.getElementById('file');
+      const file = fileInput.files[0];
+      
+      if (!file) {
+        showMessage('Please select a CSV file.', 'error');
+        return;
+      }
+
+      showPage('resultsPage');
+      document.getElementById('loadingIndicator').style.display = 'block';
+      document.getElementById('resultsContainer').style.display = 'none';
+
+      try {
+        const text = await file.text();
+        const lines = text.split('\n').filter(line => line.trim());
+        const headers = lines[0].split(',').map(h => h.trim());
+        
+        const data = lines.slice(1).map(line => {
+          const values = line.split(',').map(v => v.trim());
+          const item = {};
+          headers.forEach((header, index) => {
+            item[header] = values[index] || '';
+          });
+          return item;
+        }).filter(item => item.TransactionID); // Filter out empty rows
+
+        if (data.length === 0) {
+          throw new Error('No valid data found in CSV');
+        }
+
+        const results = await mockPrediction(data);
+        currentResults = results;
+        displayResults(results);
+        
+        document.getElementById('loadingIndicator').style.display = 'none';
+        document.getElementById('resultsContainer').style.display = 'block';
+      } catch (error) {
+        showMessage('Error processing CSV file. Please check the format and try again.', 'error');
+        showPage('inputPage');
+      }
     });
   </script>
 </body>

@@ -626,10 +626,8 @@
   </div>
 
   <script>
-    // Note: In Claude.ai artifacts, sessionStorage is not available
-    // This is a demonstration of how the results would be displayed
-    
-    // Sample data for demonstration - in a real app, this would come from sessionStorage
+    // Sample data for demonstration - in a real app, this would come from your backend
+    // Note: 0 = Fraud, 1 = Not Fraud (as per your specification)
     const sampleData = [
       {
         TransactionID: "TXN001",
@@ -637,7 +635,7 @@
         MerchantID: "MERCH_001",
         TransactionType: "purchase",
         Location: "Mumbai",
-        Prediction: 0
+        Prediction: 1  // Not Fraud
       },
       {
         TransactionID: "TXN002",
@@ -645,7 +643,7 @@
         MerchantID: "MERCH_002", 
         TransactionType: "withdrawal",
         Location: "Delhi",
-        Prediction: 1
+        Prediction: 0  // Fraud
       },
       {
         TransactionID: "TXN003",
@@ -653,19 +651,39 @@
         MerchantID: "MERCH_003",
         TransactionType: "purchase",
         Location: "Bangalore",
-        Prediction: 0
+        Prediction: 1  // Not Fraud
+      },
+      {
+        TransactionID: "TXN004",
+        Amount: 8500.00,
+        MerchantID: "SUSPECT_001",
+        TransactionType: "transfer",
+        Location: "Chennai",
+        Prediction: 0  // Fraud
+      },
+      {
+        TransactionID: "TXN005",
+        Amount: 150.00,
+        MerchantID: "MERCH_005",
+        TransactionType: "deposit",
+        Location: "Kolkata",
+        Prediction: 1  // Not Fraud
       }
     ];
 
-    // Try to get data from sessionStorage, fallback to sample data
-    let data;
-    try {
-      data = JSON.parse(sessionStorage.getItem("predictResults") || "[]");
-      if (data.length === 0) {
-        data = sampleData; // Use sample data for demonstration
+    // In your real application, you can get data from URL parameters or fetch from API
+    // For now, we'll use sample data or try to get from URL params
+    let data = sampleData;
+
+    // Try to get data from URL parameters (if passed from your Flask app)
+    const urlParams = new URLSearchParams(window.location.search);
+    const resultsParam = urlParams.get('results');
+    if (resultsParam) {
+      try {
+        data = JSON.parse(decodeURIComponent(resultsParam));
+      } catch (e) {
+        console.log('Error parsing URL parameters, using sample data');
       }
-    } catch {
-      data = sampleData; // Use sample data if sessionStorage fails
     }
 
     const tbody = document.querySelector("#resultsTable tbody");
@@ -673,117 +691,6 @@
 
     function calculateStats(data) {
       const totalTransactions = data.length;
-      const fraudTransactions = data.filter(item => item.Prediction == 1).length;
+      const fraudTransactions = data.filter(item => item.Prediction == 0).length;  // 0 = Fraud
       const safeTransactions = totalTransactions - fraudTransactions;
-      const fraudPercentage = totalTransactions > 0 ? Math.round((fraudTransactions / totalTransactions) * 100) : 0;
-
-      return { totalTransactions, fraudTransactions, safeTransactions, fraudPercentage };
-    }
-
-    function displayStats(stats) {
-      statsGrid.innerHTML = `
-        <div class="stat-card">
-          <div class="stat-number" id="totalCount">0</div>
-          <div class="stat-label">Total Transactions</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-number" id="fraudCount" style="color: #ef4444;">0</div>
-          <div class="stat-label">Fraud Detected</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-number" id="safeCount" style="color: #10b981;">0</div>
-          <div class="stat-label">Safe Transactions</div>
-        </div>
-      `;
-
-      // Animate numbers counting up
-      animateNumber('totalCount', stats.totalTransactions);
-      animateNumber('fraudCount', stats.fraudTransactions);
-      animateNumber('safeCount', stats.safeTransactions);
-    }
-
-    function animateNumber(elementId, targetNumber) {
-      const element = document.getElementById(elementId);
-      let current = 0;
-      const increment = targetNumber / 30;
-      const timer = setInterval(() => {
-        current += increment;
-        if (current >= targetNumber) {
-          current = targetNumber;
-          clearInterval(timer);
-        }
-        element.textContent = Math.floor(current);
-      }, 50);
-    }
-
-    function formatCurrency(amount) {
-      return new Intl.NumberFormat('en-IN', {
-        style: 'currency',
-        currency: 'INR'
-      }).format(amount);
-    }
-
-    if (data.length === 0) {
-      tbody.innerHTML = `
-        <tr>
-          <td colspan="6" class="no-results">
-            <div style="font-size: 3rem; margin-bottom: 1rem;">🔍</div>
-            No results found. Please go back and enter transaction data.
-          </td>
-        </tr>
-      `;
-      statsGrid.innerHTML = `
-        <div class="stat-card">
-          <div class="stat-number">0</div>
-          <div class="stat-label">No Data Available</div>
-        </div>
-      `;
-    } else {
-      const stats = calculateStats(data);
-      displayStats(stats);
-
-      data.forEach((row, index) => {
-        const tr = document.createElement("tr");
-        tr.style.setProperty('--row-index', index);
-        
-        const predictionClass = row.Prediction == 1 ? "fraud" : "safe";
-        const predictionText = row.Prediction == 1 ? "High Risk" : "Low Risk";
-        
-        tr.innerHTML = `
-          <td style="font-weight: 600;">${row.TransactionID || "-"}</td>
-          <td style="font-weight: 600;">${row.Amount ? formatCurrency(row.Amount) : "-"}</td>
-          <td>${row.MerchantID || "-"}</td>
-          <td style="text-transform: capitalize;">${row.TransactionType || "-"}</td>
-          <td>${row.Location || "-"}</td>
-          <td class="${predictionClass}">${predictionText}</td>
-        `;
-        tbody.appendChild(tr);
-      });
-    }
-
-    // Add subtle parallax effect to floating shapes
-    document.addEventListener('mousemove', (e) => {
-      const shapes = document.querySelectorAll('.floating-shape');
-      const mouseX = e.clientX / window.innerWidth;
-      const mouseY = e.clientY / window.innerHeight;
-      
-      shapes.forEach((shape, index) => {
-        const speed = (index + 1) * 0.02;
-        const x = mouseX * speed * 30;
-        const y = mouseY * speed * 30;
-        shape.style.transform = `translate(${x}px, ${y}px)`;
-      });
-    });
-
-    // Add click animation to table rows
-    document.querySelectorAll('tbody tr').forEach(row => {
-      row.addEventListener('click', function() {
-        this.style.transform = 'scale(1.02)';
-        setTimeout(() => {
-          this.style.transform = '';
-        }, 200);
-      });
-    });
-  </script>
-</body>
-</html>
+      const fraudPercentage = totalTransactions > 0 ? Math.round((fraudTrans
