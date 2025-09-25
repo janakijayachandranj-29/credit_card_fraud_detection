@@ -1,89 +1,459 @@
-<!-- File: Welcome.html -->
 <!doctype html>
 <html lang="en">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>Welcome - Credit Card Fraud Detector</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <style>
+    * {
+      box-sizing: border-box;
+    }
+
     body {
-      font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
       margin: 0;
-      background: #f6f8fb;
+      min-height: 100vh;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
+      animation: gradientShift 8s ease infinite;
     }
+
+    @keyframes gradientShift {
+      0%, 100% { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+      50% { background: linear-gradient(135deg, #764ba2 0%, #f093fb 100%); }
+    }
+
+    .container {
+      width: 100%;
+      max-width: 480px;
+      perspective: 1000px;
+    }
+
     .card {
-      max-width: 600px;
-      margin: 6rem auto;
-      background: white;
-      padding: 2rem;
-      border-radius: 12px;
-      box-shadow: 0 8px 30px rgba(20,30,70,0.08);
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      padding: 3rem 2.5rem;
+      border-radius: 24px;
+      box-shadow: 
+        0 20px 40px rgba(0, 0, 0, 0.1),
+        0 15px 12px rgba(0, 0, 0, 0.08),
+        inset 0 1px 0 rgba(255, 255, 255, 0.6);
+      transform: translateY(20px) rotateX(5deg);
+      animation: cardEntrance 1.2s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+      transition: transform 0.3s ease;
     }
+
+    .card:hover {
+      transform: translateY(0) rotateX(0deg) scale(1.02);
+    }
+
+    @keyframes cardEntrance {
+      0% {
+        opacity: 0;
+        transform: translateY(50px) rotateX(15deg) scale(0.9);
+      }
+      100% {
+        opacity: 1;
+        transform: translateY(0) rotateX(0deg) scale(1);
+      }
+    }
+
+    .header {
+      text-align: center;
+      margin-bottom: 2.5rem;
+      animation: fadeInUp 1s ease 0.3s both;
+    }
+
+    .icon {
+      width: 80px;
+      height: 80px;
+      margin: 0 auto 1.5rem;
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      border-radius: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      animation: iconPulse 2s ease-in-out infinite;
+      box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
+    }
+
+    @keyframes iconPulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+    }
+
+    .shield {
+      width: 40px;
+      height: 40px;
+      fill: white;
+    }
+
     h1 {
-      margin: 0 0 0.75rem;
+      margin: 0 0 0.5rem;
+      font-size: 2.2rem;
+      font-weight: 700;
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      letter-spacing: -0.02em;
     }
+
+    .subtitle {
+      color: #64748b;
+      font-size: 1.1rem;
+      font-weight: 400;
+      margin: 0;
+      line-height: 1.5;
+    }
+
+    @keyframes fadeInUp {
+      0% {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      100% {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .form-group {
+      margin-bottom: 1.5rem;
+      animation: slideInLeft 0.8s ease forwards;
+      animation-delay: calc(var(--delay, 0) * 0.1s);
+      opacity: 0;
+    }
+
+    .form-group:nth-child(1) { --delay: 6; }
+    .form-group:nth-child(2) { --delay: 7; }
+
+    @keyframes slideInLeft {
+      0% {
+        opacity: 0;
+        transform: translateX(-30px);
+      }
+      100% {
+        opacity: 1;
+        transform: translateX(0);
+      }
+    }
+
     label {
       display: block;
-      margin: 0.5rem 0 0.25rem;
+      margin-bottom: 0.5rem;
+      font-weight: 500;
+      color: #374151;
+      font-size: 0.95rem;
+      letter-spacing: 0.01em;
     }
-    input, button {
+
+    .input-wrapper {
+      position: relative;
+    }
+
+    input {
       width: 100%;
-      padding: 0.6rem;
-      border-radius: 8px;
-      border: 1px solid #e2e8f0;
+      padding: 1rem 1.25rem;
+      border: 2px solid #e5e7eb;
+      border-radius: 16px;
+      font-size: 1rem;
+      font-weight: 400;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      background: rgba(255, 255, 255, 0.8);
+      backdrop-filter: blur(10px);
     }
+
+    input:focus {
+      outline: none;
+      border-color: #667eea;
+      box-shadow: 
+        0 0 0 4px rgba(102, 126, 234, 0.1),
+        0 8px 16px rgba(0, 0, 0, 0.1);
+      transform: translateY(-2px);
+      background: rgba(255, 255, 255, 0.95);
+    }
+
+    input::placeholder {
+      color: #9ca3af;
+      font-weight: 400;
+    }
+
+    .input-icon {
+      position: absolute;
+      right: 1rem;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 20px;
+      height: 20px;
+      fill: #9ca3af;
+      transition: fill 0.3s ease;
+    }
+
+    input:focus + .input-icon {
+      fill: #667eea;
+    }
+
     .actions {
       display: flex;
-      gap: 0.75rem;
-      margin-top: 1rem;
+      gap: 1rem;
+      margin-top: 2.5rem;
+      animation: fadeInUp 1s ease 0.9s both;
     }
+
     button {
-      background: #2563eb;
-      color: white;
+      flex: 1;
+      padding: 1rem 1.5rem;
+      border-radius: 16px;
+      border: none;
+      font-size: 1rem;
       font-weight: 600;
       cursor: pointer;
-      border: none;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
+      overflow: hidden;
+      letter-spacing: 0.01em;
     }
-    button:hover {
-      background: #1e40af;
+
+    button::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+      transition: left 0.6s;
     }
-    .muted {
+
+    button:hover::before {
+      left: 100%;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 12px 28px rgba(102, 126, 234, 0.4);
+    }
+
+    .btn-secondary {
+      background: rgba(255, 255, 255, 0.8);
       color: #6b7280;
-      font-size: 0.9rem;
-      margin-bottom: 1rem;
+      border: 2px solid #e5e7eb;
+      backdrop-filter: blur(10px);
+    }
+
+    .btn-secondary:hover {
+      background: rgba(255, 255, 255, 0.95);
+      color: #374151;
+      border-color: #d1d5db;
+      transform: translateY(-2px);
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+    }
+
+    .floating-shapes {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: -1;
+    }
+
+    .shape {
+      position: absolute;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 50%;
+      animation: float 20s infinite linear;
+    }
+
+    .shape:nth-child(1) {
+      width: 100px;
+      height: 100px;
+      top: 20%;
+      left: 10%;
+      animation-delay: -2s;
+    }
+
+    .shape:nth-child(2) {
+      width: 60px;
+      height: 60px;
+      top: 60%;
+      left: 80%;
+      animation-delay: -8s;
+    }
+
+    .shape:nth-child(3) {
+      width: 80px;
+      height: 80px;
+      top: 40%;
+      left: 20%;
+      animation-delay: -15s;
+    }
+
+    @keyframes float {
+      0% {
+        transform: translateY(0px) rotate(0deg);
+        opacity: 0.7;
+      }
+      50% {
+        transform: translateY(-50px) rotate(180deg);
+        opacity: 0.3;
+      }
+      100% {
+        transform: translateY(0px) rotate(360deg);
+        opacity: 0.7;
+      }
+    }
+
+    @media (max-width: 640px) {
+      .card {
+        padding: 2rem 1.5rem;
+        margin: 1rem;
+      }
+      
+      h1 {
+        font-size: 1.8rem;
+      }
+      
+      .actions {
+        flex-direction: column;
+      }
+      
+      .icon {
+        width: 60px;
+        height: 60px;
+      }
+      
+      .shield {
+        width: 30px;
+        height: 30px;
+      }
     }
   </style>
 </head>
 <body>
-  <main class="card">
-    <h1>Welcome</h1>
-    <p class="muted">Enter your details to get started with the Credit Card Fraud Detector.</p>
+  <div class="floating-shapes">
+    <div class="shape"></div>
+    <div class="shape"></div>
+    <div class="shape"></div>
+  </div>
 
-    <form id="welcomeForm">
-      <label for="name">Full name</label>
-      <input id="name" name="name" placeholder="Your name" required>
-
-      <label for="email">Email</label>
-      <input id="email" name="email" type="email" placeholder="you@example.com" required>
-
-      <div class="actions">
-        <button type="submit">Continue</button>
-        <button type="button" onclick="window.location='Input.html'">Skip</button>
+  <div class="container">
+    <div class="card">
+      <div class="header">
+        <div class="icon">
+          <svg class="shield" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4z"/>
+            <path d="M9 12l2 2 4-4" stroke="white" stroke-width="2" fill="none"/>
+          </svg>
+        </div>
+        <h1>Welcome</h1>
+        <p class="subtitle">Enter your details to access the Credit Card Fraud Detection System</p>
       </div>
-    </form>
-  </main>
+
+      <form id="welcomeForm">
+        <div class="form-group">
+          <label for="name">Full Name</label>
+          <div class="input-wrapper">
+            <input id="name" name="name" placeholder="Enter your full name" required autocomplete="name">
+            <svg class="input-icon" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+            </svg>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="email">Email Address</label>
+          <div class="input-wrapper">
+            <input id="email" name="email" type="email" placeholder="Enter your email address" required autocomplete="email">
+            <svg class="input-icon" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/>
+            </svg>
+          </div>
+        </div>
+
+        <div class="actions">
+          <button type="submit" class="btn-primary">Continue</button>
+          <button type="button" class="btn-secondary" onclick="window.location='Input.html'">Skip for Now</button>
+        </div>
+      </form>
+    </div>
+  </div>
 
   <script>
+    // Note: Browser storage APIs are not available in Claude.ai artifacts
+    // This would need to be modified for actual deployment
     const form = document.getElementById('welcomeForm');
+    
+    // Add input animation effects
+    const inputs = document.querySelectorAll('input');
+    inputs.forEach(input => {
+      input.addEventListener('focus', function() {
+        this.parentElement.classList.add('focused');
+      });
+      
+      input.addEventListener('blur', function() {
+        this.parentElement.classList.remove('focused');
+      });
+    });
+    
     form.addEventListener('submit', e => {
       e.preventDefault();
-      // Save info in sessionStorage for later use
-      const data = {
-        name: form.name.value.trim(),
-        email: form.email.value.trim()
-      };
-      sessionStorage.setItem('userInfo', JSON.stringify(data));
-      window.location = 'input.html';
+      
+      // Add loading state to button
+      const submitBtn = form.querySelector('.btn-primary');
+      const originalText = submitBtn.textContent;
+      submitBtn.textContent = 'Processing...';
+      submitBtn.style.background = 'linear-gradient(135deg, #9ca3af 0%, #6b7280 100%)';
+      
+      // Simulate processing time
+      setTimeout(() => {
+        // In a real application, you would save to sessionStorage here:
+        // const data = {
+        //   name: form.name.value.trim(),
+        //   email: form.email.value.trim()
+        // };
+        // sessionStorage.setItem('userInfo', JSON.stringify(data));
+        
+        // For demonstration, just show success
+        submitBtn.textContent = 'Success!';
+        submitBtn.style.background = 'linear-gradient(135deg, #10b981 0%, #059669 100%)';
+        
+        setTimeout(() => {
+          // In a real app: window.location = 'input.html';
+          alert('Form submitted successfully! In a real app, you would be redirected to the input page.');
+          
+          // Reset button
+          submitBtn.textContent = originalText;
+          submitBtn.style.background = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
+        }, 1000);
+      }, 1500);
+    });
+
+    // Add subtle parallax effect to floating shapes
+    document.addEventListener('mousemove', (e) => {
+      const shapes = document.querySelectorAll('.shape');
+      const mouseX = e.clientX / window.innerWidth;
+      const mouseY = e.clientY / window.innerHeight;
+      
+      shapes.forEach((shape, index) => {
+        const speed = (index + 1) * 0.02;
+        const x = mouseX * speed * 50;
+        const y = mouseY * speed * 50;
+        shape.style.transform = `translate(${x}px, ${y}px)`;
+      });
     });
   </script>
 </body>
