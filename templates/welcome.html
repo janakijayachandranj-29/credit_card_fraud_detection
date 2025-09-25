@@ -393,8 +393,6 @@
   </div>
 
   <script>
-    // Note: Browser storage APIs are not available in Claude.ai artifacts
-    // This would need to be modified for actual deployment
     const form = document.getElementById('welcomeForm');
     
     // Add input animation effects
@@ -420,26 +418,22 @@
       
       // Simulate processing time
       setTimeout(() => {
-        // In a real application, you would save to sessionStorage here:
-        // const data = {
-        //   name: form.name.value.trim(),
-        //   email: form.email.value.trim()
-        // };
-        // sessionStorage.setItem('userInfo', JSON.stringify(data));
+        // Save user info to sessionStorage (optional)
+        const data = {
+          name: form.name.value.trim(),
+          email: form.email.value.trim()
+        };
+        sessionStorage.setItem('userInfo', JSON.stringify(data));
         
-        // For demonstration, just show success
+        // Success state
         submitBtn.textContent = 'Success!';
         submitBtn.style.background = 'linear-gradient(135deg, #10b981 0%, #059669 100%)';
         
         setTimeout(() => {
-          // In a real app: window.location = 'input.html';
-          alert('Form submitted successfully! In a real app, you would be redirected to the input page.');
-          
-          // Reset button
-          submitBtn.textContent = originalText;
-          submitBtn.style.background = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
-        }, 1000);
-      }, 1500);
+          // Redirect to input.html
+          window.location.href = 'input.html';
+        }, 800);
+      }, 1200);
     });
 
     // Add subtle parallax effect to floating shapes
